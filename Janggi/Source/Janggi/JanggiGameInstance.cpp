@@ -100,7 +100,7 @@ void UJanggiGameInstance::LoadLobbyMenu()
 	LobbyMenu = CreateWidget<UMenuBase>(this, LobbyMenuClass);
 	if (!ensure(LobbyMenu != nullptr)) return;
 
-	LobbyMenu->SetUp_UIOnly();
+	LobbyMenu->SetUp_GameAndUI();
 	LobbyMenu->SetMenuInterface(this);
 }
 
@@ -110,7 +110,7 @@ void UJanggiGameInstance::LoadInGameUI()
 	InGameUI = CreateWidget<UMenuBase>(this, InGameUIClass);
 	if (!ensure(InGameUI != nullptr)) return;
 
-	InGameUI->SetUp_GameOnly();
+	InGameUI->SetUp_GameAndUI();
 	InGameUI->SetMenuInterface(this);
 }
 

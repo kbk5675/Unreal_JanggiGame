@@ -13,5 +13,16 @@ UCLASS()
 class JANGGI_API AJole : public ABasePawn
 {
 	GENERATED_BODY()
-	
+
+protected:
+	AJole();
+	virtual void BeginPlay() override;
+
+	UFUNCTION()
+	void OnClickJole(UPrimitiveComponent* ClickedComp, FKey ButtonClicked);
+
+	void FoundMovableTile();
+
+
+
 };

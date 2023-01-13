@@ -37,7 +37,6 @@ public:
 
 	UFUNCTION(Exec, BlueprintCallable)
 	void LoadUserMenu();
-
 	
 	UPROPERTY()
 	TSubclassOf<class UUserWidget> MainMenuClass;
@@ -51,9 +50,10 @@ public:
 	UPROPERTY()
 	TSubclassOf<class UUserWidget> UserMenuClass;
 
-
 	class UMenuBase* MainMenu;
 	class UMenuBase* LobbyMenu;
 	class UMenuBase* UserMenu;
 	class UMenuBase* InGameUI;
+
+	int TableType = 0;
 };

@@ -14,4 +14,6 @@ class JANGGI_API ACha : public ABasePawn
 {
 	GENERATED_BODY()
 	
+public:
+	ACha();
 };

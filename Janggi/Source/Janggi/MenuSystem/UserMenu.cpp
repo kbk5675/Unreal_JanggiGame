@@ -2,6 +2,7 @@
 
 
 #include "UserMenu.h"
+#include "../JanggiPlayerController.h"
 #include "Components/Button.h"
 
 bool UUserMenu::Initialize()

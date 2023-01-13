@@ -19,7 +19,7 @@ protected:
 	virtual void BeginPlay() override;
 
 	UFUNCTION(BlueprintCallable)
-	void BuildBoard(const FVector CenteredLocation, const int X, const int Y);
+	void BuildBoard(const FVector CenteredLocation, const int X, const int Y, const int TableType);
 
 public:	
 	virtual void Tick(float DeltaTime) override;
@@ -28,32 +28,53 @@ public:
 	FVector2D BoardSize;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	TArray<class AActor*> BoardTiles;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	TSoftClassPtr<ABlankTile> TileClass;
-	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	TSoftClassPtr<ABlankTile> ChaTileClass;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	TSoftClassPtr<ABlankTile> JoleTileClass;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	TSoftClassPtr<ABlankTile> KingTileClass;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	TSoftClassPtr<ABlankTile> MaTileClass;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	TSoftClassPtr<ABlankTile> PhoTileClass;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	TSoftClassPtr<ABlankTile> SaTileClass;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	TSoftClassPtr<ABlankTile> SangTileClass;
+	TArray<class ABlankTile*> BoardTiles;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float SectorSize;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSoftClassPtr<ABlankTile> TileClass;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSoftClassPtr<ABlankTile> ChaBlueTileClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSoftClassPtr<ABlankTile> JoleBlueTileClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSoftClassPtr<ABlankTile> KingBlueTileClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSoftClassPtr<ABlankTile> MaBlueTileClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSoftClassPtr<ABlankTile> PhoBlueTileClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSoftClassPtr<ABlankTile> SaBlueTileClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSoftClassPtr<ABlankTile> SangBlueTileClass;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSoftClassPtr<ABlankTile> ChaRedTileClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSoftClassPtr<ABlankTile> JoleRedTileClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSoftClassPtr<ABlankTile> KingRedTileClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSoftClassPtr<ABlankTile> MaRedTileClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSoftClassPtr<ABlankTile> PhoRedTileClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSoftClassPtr<ABlankTile> SaRedTileClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSoftClassPtr<ABlankTile> SangRedTileClass;
 };

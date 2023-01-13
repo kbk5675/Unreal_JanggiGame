@@ -19,7 +19,13 @@ public:
 	class UJanggiGameInstance* GameInstance;
 	class AJanggiPlayerController* Controller;
 	class AJanggiGameStateBase* GameState;
-	
+
+	void SetVisibleWaitWidget();
+	void SetHiddenWaitWidget();
+
+	void SetEnabledTrueBtnStart();
+	void SetEnabledFalseBtnStart();
+
 protected:
 	virtual bool Initialize() override;
 	virtual void NativeConstruct() override;
@@ -35,6 +41,22 @@ private:
 	UFUNCTION()
 	void PressedOnBtnStart();
 
+	UFUNCTION()
+	void PressedOnBtnTable1();
+
+	UFUNCTION()
+	void PressedOnBtnTable2();
+
+	UFUNCTION()
+	void PressedOnBtnTable3();
+
+	UFUNCTION()
+	void PressedOnBtnTable4();
+
+	UFUNCTION()
+	void PressedOnBtnGo();
+
+
 	UPROPERTY(meta = (BindWidget))
 	class UButton* BtnReady;
 
@@ -43,6 +65,21 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	class UButton* BtnStart;
+
+	UPROPERTY(meta = (BindWidget))
+	class UButton* BtnTable1;
+
+	UPROPERTY(meta = (BindWidget))
+	class UButton* BtnTable2;
+
+	UPROPERTY(meta = (BindWidget))
+	class UButton* BtnTable3;
+
+	UPROPERTY(meta = (BindWidget))
+	class UButton* BtnTable4;
+
+	UPROPERTY(meta = (BindWidget))
+	class UButton* BtnGo;
 
 	UPROPERTY(meta = (BindWidget))
 	class UWidgetSwitcher* MenuSwitcher;
@@ -64,4 +101,7 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	class UWidget* StartMenu;
+
+	UPROPERTY(meta = (BindWidget))
+	class UWidget* TableSettingMenu;
 };

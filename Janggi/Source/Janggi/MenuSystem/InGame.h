@@ -16,6 +16,7 @@ class JANGGI_API UInGame : public UMenuBase
 	
 public:
 	UWorld* World;
+	class UJanggiGameInstance* GameInstance;
 	class AJanggiPlayerController* Controller;
 	class AJanggiPlayerState* PlayerState;
 

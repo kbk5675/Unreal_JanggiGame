@@ -21,11 +21,27 @@ public:
 
 	UFUNCTION(Server, Reliable)
 	void ServerClientReady();
-	void ServerClientReady_Implementation();
 
 	UFUNCTION(Server, Reliable)
 	void ServerClientNotReady();
-	void ServerClientNotReady_Implementation();
+
+	UFUNCTION(Server, Reliable)
+	void ServerSetTableType(int Val);
+
+	UFUNCTION(Server, Reliable)
+	void ServerSetVisibleWaitWidget();
+
+	UFUNCTION(Server, Reliable)
+	void ServerSetHiddenWaitWidget();
+
+	UFUNCTION(Server, Reliable)
+	void ServerSetEnabledTrueBtnStart();
+
+	UFUNCTION(Server, Reliable)
+	void ServerSetEnabledFalseBtnStart();
+
+	UFUNCTION(Server, Reliable)
+	void ServerMoveDataToInstance();
 
 protected:
 
