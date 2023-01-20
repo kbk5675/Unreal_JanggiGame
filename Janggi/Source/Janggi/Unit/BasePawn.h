@@ -15,36 +15,32 @@ class JANGGI_API ABasePawn : public APawn
 //UFUNCTION
 public:
 	ABasePawn();
+
 	void HandleDestruction();
 
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastHandleDestruction();
+
 	void SetCurrentTile(AActor* Tile);
-	void SetCurrentTileIsEmpty(int const Val);
+	void SetCurrentTileAndPos(AActor* Tile);
 	void SetCurrentTileCurrentUnit(AActor* Unit);
-	void SetPosY(int Val) { Y = Val; }
-	void SetPosX(int Val) { X = Val; }
 
-	int GextPosY() { return Y; }
-	int GextPosX() { return X; }
+	void SetPosY(int Val)	{ Y = Val; }
+	void SetPosX(int Val)	{ X = Val; }
+	void SetHP(int Val)		{ HP = Val; }
 
-	int GetTeam() { return Team; }
-
-	void SetHP(int const Val) { HP = Val; }
-	int GetHP() { return HP; }
-
-	void SetDamage(int const Val) { HP = Damage; }
+	int GextPosY()	{ return Y; }
+	int GextPosX()	{ return X; }
+	int GetTeam()	{ return Team; }
+	int GetHP()		{ return HP; }
 	int GetDamage() { return Damage; }
+	AActor* GetCurrentTile() { return Cast<AActor>(CurrentTile); }
 
-	void FoundMyTile();
-	
 	void Attack(ABasePawn* TargetUnit);
-
-	UFUNCTION(Server, Reliable)
-	void ServerAttack(ABasePawn* TargetUnit);
-	void ServerAttack_Implementation(ABasePawn* TargetUnit);
-
 
 protected:
 	virtual void BeginPlay() override;
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	UFUNCTION()
 	void UnitSelected(UPrimitiveComponent* ClickedComp, FKey ButtonClicked);
@@ -70,13 +66,16 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	class USoundBase* DeathSound;
 
-	UPROPERTY(VisibleAnywhere, Category = "Location")
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	TSubclassOf<class AGun> GunClass;
+
+	UPROPERTY(VisibleAnywhere, Replicated, Category = "Location")
 	class ABlankTile* CurrentTile;
 
-	UPROPERTY(VisibleAnywhere, Category = "Location")
+	UPROPERTY(VisibleAnywhere, Replicated, Category = "Location")
 	int Y;
 
-	UPROPERTY(VisibleAnywhere, Category = "Location")
+	UPROPERTY(VisibleAnywhere, Replicated, Category = "Location")
 	int X;
 
 	UPROPERTY(EditAnywhere, Category = "State")
@@ -94,9 +93,7 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "State")
 	int UnitScore;
 
-	UPROPERTY(EditAnywhere, Category = "Config")
-	TSubclassOf<class AGun> GunClass;
-
 private:
-	
+	FTimerHandle WaitHandle;
+	float WaitTime = 2.5f;
 };

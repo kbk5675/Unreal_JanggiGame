@@ -19,7 +19,7 @@ protected:
 	virtual void BeginPlay() override;
 
 	UFUNCTION(BlueprintCallable)
-	void BuildBoard(const FVector CenteredLocation, const int X, const int Y, const int TableType);
+	void BuildBoard(const FVector CenteredLocation, const int X, const int Y, const TArray<int> TableType);
 
 public:	
 	virtual void Tick(float DeltaTime) override;
@@ -77,4 +77,10 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSoftClassPtr<ABlankTile> SangRedTileClass;
+
+private:
+	TArray<int>TableType1 = { 0,1,0,6,9,1,9,6,0,2,0,7,9,2,9,7 };
+	TArray<int>TableType2 = { 0,2,0,7,9,2,9,7,0,1,0,6,9,1,9,6 };
+	TArray<int>TableType3 = { 0,1,0,7,9,1,9,7,0,2,0,6,9,2,9,6 };
+	TArray<int>TableType4 = { 0,2,0,6,9,2,9,6,0,1,0,7,9,1,9,7 };
 };

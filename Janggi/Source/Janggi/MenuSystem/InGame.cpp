@@ -12,8 +12,6 @@ bool UInGame::Initialize()
 {
 	bool Success = Super::Initialize();
 	if (!Success) return false;
-
-	UE_LOG(LogTemp, Warning, TEXT("Initialize"));
 	
 	if (!ensure(TimerText != nullptr)) return false;
 
@@ -32,14 +30,24 @@ void UInGame::NativeConstruct()
 
 	Controller = Cast<AJanggiPlayerController>(World->GetFirstPlayerController());
 	if (!ensure(Controller != nullptr)) return;
+
+	GameState = Cast<AJanggiGameStateBase>(World->GetGameState());
+	if (!ensure(GameState != nullptr)) return;
 }
 
 void UInGame::NativeTick(const FGeometry& MyGeometry, float DeltaTime)
 {
 	Super::NativeTick(MyGeometry, DeltaTime);
 
-	PlayerState = Cast<AJanggiPlayerState>(Controller->PlayerState);
-	if (!ensure(PlayerState != nullptr)) return;
+	Controller->bShowMouseCursor = true;
 
-	Score->SetText(FText::FromString(FString::FromInt(PlayerState->GetPlayerScore())));
+	PlayerState = Cast<AJanggiPlayerState>(Controller->PlayerState);
+	if (PlayerState)
+	{
+		Score->SetText(FText::FromString(FString::FromInt(PlayerState->GetPlayerScore())));
+	}
+
+	auto SelectedUnit = Cast<ABasePawn>(GameState->GetSelectedUnit());
+	/*if(SelectedUnit) GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Green, FString::Printf(TEXT("X : %d   Y: %d")
+		, SelectedUnit->GextPosX(), SelectedUnit->GextPosY()));*/
 }

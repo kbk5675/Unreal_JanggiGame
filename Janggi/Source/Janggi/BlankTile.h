@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Unit/BasePawn.h"
+#include "MovingPoint.h"
 #include "GameFramework/Actor.h"
 #include "BlankTile.generated.h"
 
@@ -18,11 +19,9 @@ struct FBlankTileInfo
 	int Y{};
 	UPROPERTY(EditAnywhere, Category = "TileInfo")
 	int Z{};
-	UPROPERTY(EditAnywhere, Category = "TileInfo")
-	int TileIsEmpty{};
-
+	
 	FBlankTileInfo() = default;
-	FBlankTileInfo(int const NewX, int const NewY, int const NewZ) : X(NewX), Y(NewY), Z(NewZ), TileIsEmpty(0) {}
+	FBlankTileInfo(int const NewX, int const NewY, int const NewZ) : X(NewX), Y(NewY), Z(NewZ) {}
 };
 
 UCLASS()
@@ -33,25 +32,21 @@ class JANGGI_API ABlankTile : public AActor
 public:	
 	ABlankTile();
 
-	void SetTileInfo(FBlankTileInfo InTileInfo) { TileInfo = InTileInfo; }
-	FBlankTileInfo GetTileInfo() { return TileInfo; }
-
-	void SetTileIsEmpty(int const Val) { TileInfo.TileIsEmpty = Val; }
-
+	void SetTileInfo(FBlankTileInfo InTileInfo)		{ TileInfo = InTileInfo; }
+	void SetCurrentMovingPoint(AActor* MovingPoint) { CurrentMovingPoint = Cast<AMovingPoint>(MovingPoint); }
 	void SetCurrentUnit(AActor* Unit);
-	AActor* GetCurrentUnit() { return Cast<AActor>(CurrentUnit); }
+	
+	FBlankTileInfo	GetTileInfo()			{ return TileInfo; }
+	FVector			GetSlotLocation()		{ return UnitSlot->GetComponentLocation(); }
+	AActor*			GetCurrentUnit()		{ return Cast<AActor>(CurrentUnit); }
+	AActor*			GetCurrentMovingPoint() { return Cast<AActor>(CurrentMovingPoint); }
 
-	void SpawnUnit();
-	void SpawnMovePoint(int const MovingUnitTeamInfo);
-
-	void SetbIsSpawnMovingPoint(bool const bVal) { bIsSpawnMovingPoint = bVal; }
-	bool GetbIsSpawnMovingPoint() { return bIsSpawnMovingPoint; }
-
-	FVector GetSlotLocation() { return UnitSlot->GetComponentLocation(); }
 
 protected:
 	virtual void BeginPlay() override;
-	virtual void Tick(float DeltaTime) override;
+	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	
+	void SpawnActors();
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = true))
 	class USceneComponent* SceneComponent;
@@ -62,20 +57,20 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = true))
 	class USceneComponent* UnitSlot;
 
-	UPROPERTY(VisibleAnywhere, Category = "Config", meta = (AllowPrivateAccess = true))
-	FBlankTileInfo TileInfo;
-
 	UPROPERTY(EditDefaultsOnly, Category = "Config")
 	TSubclassOf<class ABasePawn> SpawnUnitClass;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Config")
 	TSubclassOf<class AActor> MovingPointClass;
 
-	UPROPERTY(VisibleAnywhere, Category = "Unit")
+	UPROPERTY(VisibleAnywhere, Replicated, Category = "Config", meta = (AllowPrivateAccess = true))
+	FBlankTileInfo TileInfo;
+
+	UPROPERTY(VisibleAnywhere, Replicated, Category = "Unit")
 	class ABasePawn* CurrentUnit;
 
-	UPROPERTY(VisibleAnywhere, Category = "Config")
-	bool bIsSpawnMovingPoint;
+	UPROPERTY(VisibleAnywhere, Replicated, Category = "Unit")
+	class AMovingPoint* CurrentMovingPoint;
 
 private:
 	

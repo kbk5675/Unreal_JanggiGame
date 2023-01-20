@@ -20,9 +20,4 @@ protected:
 
 	UFUNCTION()
 	void OnClickJole(UPrimitiveComponent* ClickedComp, FKey ButtonClicked);
-
-	void FoundMovableTile();
-
-
-
 };

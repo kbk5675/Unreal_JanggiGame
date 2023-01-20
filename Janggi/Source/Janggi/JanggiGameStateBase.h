@@ -10,6 +10,12 @@
 /**
  * 
  */
+enum ETURN 
+{
+	Server_Turn = 0,
+	Client_Turn = 1,
+};
+
 UCLASS()
 class JANGGI_API AJanggiGameStateBase : public AGameStateBase
 {
@@ -17,8 +23,8 @@ class JANGGI_API AJanggiGameStateBase : public AGameStateBase
 
 public:
 	AJanggiGameStateBase();
+	virtual void PostInitializeComponents() override;
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const;
-	virtual void UpdateServerTimeSeconds() override;
 
 	bool GetbClientReady() { return bClientReady; }
 	bool IsClientReady() { return bClientReady; }
@@ -26,10 +32,8 @@ public:
 	void  ClientReady() { bClientReady = true; }
 	void  ClientNotReady() { bClientReady = false; }
 
-	float GetTime() { return Time; }
-
-	void IncreaseTime(float Value) { Time += Value; }
-	void CountDownTime(float Value) { Time -= Value; }
+	void IncreaseTime(float const Value) { Time += Value; }
+	void CountDownTime(float const Value) { Time -= Value; }
 
 	void	SetSelectedUnit(AActor* Unit) { SelectedUnit = Unit; }
 	AActor* GetSelectedUnit() { return SelectedUnit; }
@@ -37,31 +41,33 @@ public:
 	void	SetTableType(int Val) { TableType = Val; }
 	int		GetTableType() { return TableType; }
 
-	UFUNCTION()
-	void OnRep_MoveDataToInstance();
 	void MoveDataToInstance();
+	void FindMoveableTile(int TargetPosY,int TargetPosX);
+	void FindMovingPoint(AActor* Tile);
+	void SetVisibleMovingPoint(AActor* MovingPoint, bool bVal);
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(Replicated)
 	TArray<class ABlankTile*> BoardTiles;
+
+	UPROPERTY(Replicated)
+	TArray<class AMovingPoint*> MovingPoints;
+
+
 	
 protected:
 	
-
 private:
-	UPROPERTY(VisibleAnywhere, Replicated)
-	bool	bClientReady = false;
+	UPROPERTY(Replicated)
+	bool bClientReady = false;
 
-	UPROPERTY(VisibleAnywhere, Replicated)
-	float	Time = 120.f;
+	UPROPERTY(Replicated)
+	int	Turn = 0;
 
-	UPROPERTY(VisibleAnywhere, Replicated)
-	bool	Turn = 0;
-
-	UPROPERTY(VisibleAnywhere, ReplicatedUsing = OnRep_MoveDataToInstance)
-	int		TableType = 0;
-
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(Replicated)
 	class AActor* SelectedUnit;
 
-	
+	UPROPERTY(Replicated)
+	float Time = 120.f;
+
+	int	TableType = 0;
 };

@@ -15,24 +15,26 @@ class JANGGI_API AMovingPoint : public AActor
 	
 public:	
 	AMovingPoint();
-	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION()
 	void OnClickedMovingPoint(UPrimitiveComponent* ClickedComp, FKey ButtonClicked);
 
 	void MoveUnit(AActor* Unit);
+	void MoveSelectedUnit(AActor* Unit);
 	void HandleDestruction();
 
+	UPROPERTY(VisibleAnywhere, Replicated, Category = "Location")
 	class ABlankTile* CurrentTile;
 
-	UPROPERTY(VisibleAnywhere, Category = "Location")
+	UPROPERTY(VisibleAnywhere, Replicated, Category = "Location")
 	int Y;
 
-	UPROPERTY(VisibleAnywhere, Category = "Location")
+	UPROPERTY(VisibleAnywhere, Replicated, Category = "Location")
 	int X;
 
 protected:
 	virtual void BeginPlay() override;
+	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	UPROPERTY(EditInstanceOnly, BlueprintReadOnly, Category = "Components");
 	UStaticMeshComponent* BaseMesh;

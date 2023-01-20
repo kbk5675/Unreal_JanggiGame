@@ -114,10 +114,6 @@ void ULobbyMenu::NativeTick(const FGeometry& MyGeometry, float DeltaTime)
 			BtnGo->SetIsEnabled(false);
 		}
 	}
-	else
-	{	// Client
-		
-	}
 }
 
 void ULobbyMenu::PressedOnBtnReady()
@@ -139,7 +135,7 @@ void ULobbyMenu::PressedOnBtnCancel()
 {
 	if (!Controller->HasAuthority())
 	{
-		Controller->ServerSetTableType(0);
+		GameState->SetTableType(0);
 		Controller->ServerClientNotReady();
 		Controller->ServerSetVisibleWaitWidget();
 		Controller->ServerSetEnabledFalseBtnStart();
@@ -162,39 +158,31 @@ void ULobbyMenu::PressedOnBtnStart()
 
 void ULobbyMenu::PressedOnBtnTable1()
 {
-	if (Controller->HasAuthority())
-	{
-		GameState->SetTableType(1);
-	}
+	GameState->SetTableType(1);
+	Controller->ServerMoveDataToInstance();
 }
 
 void ULobbyMenu::PressedOnBtnTable2()
 {
-	if (Controller->HasAuthority())
-	{
-		GameState->SetTableType(2);
-	}
+	GameState->SetTableType(2);
+	Controller->ServerMoveDataToInstance();
 }
 
 void ULobbyMenu::PressedOnBtnTable3()
 {
-	if (Controller->HasAuthority())
-	{
-		GameState->SetTableType(3);
-	}
+	GameState->SetTableType(3);
+	Controller->ServerMoveDataToInstance();
 }
 
 void ULobbyMenu::PressedOnBtnTable4()
 {
-	if (Controller->HasAuthority())
-	{
-		GameState->SetTableType(4);
-	}
+	GameState->SetTableType(4);
+	Controller->ServerMoveDataToInstance();
 }
 
 void ULobbyMenu::PressedOnBtnGo()
 {
-	FString InGame = "/Game/Maps/InGame?listen";
+	FString InGame = "/Game/Maps/Test?listen";
 	GameInstance->LoadLevel(InGame);
 }
 

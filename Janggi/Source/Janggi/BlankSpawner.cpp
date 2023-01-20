@@ -8,30 +8,46 @@
 
 ABlankSpawner::ABlankSpawner()
 {
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
+	bReplicates = true;
 	SectorSize = 120.f;
-	
 }
 
 void ABlankSpawner::BeginPlay()
 {
 	Super::BeginPlay();
 
-	auto GameInstance = Cast<UJanggiGameInstance>(GetWorld()->GetGameInstance());
-	int TableType = GameInstance->TableType;
-	
-	if (TableType == 0)
+	if (HasAuthority())
 	{
-		BuildBoard(FVector(0.f, 0.f, 5.f), 9, 10, 1);
-	}
-	else
-	{
-		BuildBoard(FVector(0.f, 0.f, 5.f), 9, 10, TableType);
+		auto GameState = Cast<AJanggiGameStateBase>(GetWorld()->GetGameState());
+		if (GameState)
+		{
+			int Temp = GameState->GetTableType();
+
+			switch (Temp)
+			{
+			case 0:	// 마상마상
+				BuildBoard(FVector(0.f, 0.f, 5.f), 9, 10, TableType1);
+				break;
+			case 1: // 마상마상
+				BuildBoard(FVector(0.f, 0.f, 5.f), 9, 10, TableType1);
+				break;
+			case 2: // 상마상마
+				BuildBoard(FVector(0.f, 0.f, 5.f), 9, 10, TableType2);
+				break;
+			case 3: // 마마상상
+				BuildBoard(FVector(0.f, 0.f, 5.f), 9, 10, TableType3);
+				break;
+			case 4: // 상상마마
+				BuildBoard(FVector(0.f, 0.f, 5.f), 9, 10, TableType4);
+				break;
+			}
+		}
 	}
 }
 	
 
-void ABlankSpawner::BuildBoard(const FVector CenteredLocation, const int X, const int Y, const int TableType)
+void ABlankSpawner::BuildBoard(const FVector CenteredLocation, const int X, const int Y, const TArray<int> TableType)
 {
 	// Do not execute if BoardTiles array already contains Tiles
 	if(BoardTiles.Num() == 0)
@@ -59,87 +75,6 @@ void ABlankSpawner::BuildBoard(const FVector CenteredLocation, const int X, cons
 
 				AActor* TileToSpawn;
 
-				switch (TableType)
-				{
-				case 1:	// 마상마상
-					if ((OuterIndex == 0 && InnerIndex == 1) || (OuterIndex == 0 && InnerIndex == 6))
-					{	// Sang Red
-						TileToSpawn = UGameplayStatics::BeginDeferredActorSpawnFromClass(this, SangRedTileClass.LoadSynchronous(), SpawnTransform);
-					}
-					else if ((OuterIndex == 9 && InnerIndex == 1) || (OuterIndex == 9 && InnerIndex == 6))
-					{	// Sang Blue
-						TileToSpawn = UGameplayStatics::BeginDeferredActorSpawnFromClass(this, SangBlueTileClass.LoadSynchronous(), SpawnTransform);
-					}
-					else if ((OuterIndex == 0 && InnerIndex == 2) || (OuterIndex == 0 && InnerIndex == 7))
-					{	// Ma Red
-						TileToSpawn = UGameplayStatics::BeginDeferredActorSpawnFromClass(this, MaRedTileClass.LoadSynchronous(), SpawnTransform);
-					}
-					else if ((OuterIndex == 9 && InnerIndex == 2) || (OuterIndex == 9 && InnerIndex == 7))
-					{	// Ma Blue
-						TileToSpawn = UGameplayStatics::BeginDeferredActorSpawnFromClass(this, MaBlueTileClass.LoadSynchronous(), SpawnTransform);
-					}
-
-					break;
-
-				case 2:	// 상마상마
-					if ((OuterIndex == 0 && InnerIndex == 2) || (OuterIndex == 0 && InnerIndex == 7))
-					{	// Sang Red
-						TileToSpawn = UGameplayStatics::BeginDeferredActorSpawnFromClass(this, SangRedTileClass.LoadSynchronous(), SpawnTransform);
-					}
-					else if ((OuterIndex == 9 && InnerIndex == 2) || (OuterIndex == 9 && InnerIndex == 7))
-					{	// Sang Blue
-						TileToSpawn = UGameplayStatics::BeginDeferredActorSpawnFromClass(this, SangBlueTileClass.LoadSynchronous(), SpawnTransform);
-					}
-					else if ((OuterIndex == 0 && InnerIndex == 1) || (OuterIndex == 0 && InnerIndex == 6))
-					{	// Ma Red
-						TileToSpawn = UGameplayStatics::BeginDeferredActorSpawnFromClass(this, MaRedTileClass.LoadSynchronous(), SpawnTransform);
-					}
-					else if ((OuterIndex == 9 && InnerIndex == 1) || (OuterIndex == 9 && InnerIndex == 6))
-					{	// Ma Blue
-						TileToSpawn = UGameplayStatics::BeginDeferredActorSpawnFromClass(this, MaBlueTileClass.LoadSynchronous(), SpawnTransform);
-					}
-
-					break;
-				case 3:	// 상마마상
-					if ((OuterIndex == 0 && InnerIndex == 1) || (OuterIndex == 0 && InnerIndex == 7))
-					{	// Sang Red
-						TileToSpawn = UGameplayStatics::BeginDeferredActorSpawnFromClass(this, SangRedTileClass.LoadSynchronous(), SpawnTransform);
-					}
-					else if ((OuterIndex == 9 && InnerIndex == 1) || (OuterIndex == 9 && InnerIndex == 7))
-					{	// Sang Blue
-						TileToSpawn = UGameplayStatics::BeginDeferredActorSpawnFromClass(this, SangBlueTileClass.LoadSynchronous(), SpawnTransform);
-					}
-					else if ((OuterIndex == 0 && InnerIndex == 2) || (OuterIndex == 0 && InnerIndex == 6))
-					{	// Ma Red
-						TileToSpawn = UGameplayStatics::BeginDeferredActorSpawnFromClass(this, MaRedTileClass.LoadSynchronous(), SpawnTransform);
-					}
-					else if ((OuterIndex == 9 && InnerIndex == 2) || (OuterIndex == 9 && InnerIndex == 6))
-					{	// Ma Blue
-						TileToSpawn = UGameplayStatics::BeginDeferredActorSpawnFromClass(this, MaBlueTileClass.LoadSynchronous(), SpawnTransform);
-					}
-
-					break;
-				case 4:	// 마상상마
-					if ((OuterIndex == 0 && InnerIndex == 2) || (OuterIndex == 0 && InnerIndex == 6))
-					{	// Sang Red
-						TileToSpawn = UGameplayStatics::BeginDeferredActorSpawnFromClass(this, SangRedTileClass.LoadSynchronous(), SpawnTransform);
-					}
-					else if ((OuterIndex == 9 && InnerIndex == 2) || (OuterIndex == 9 && InnerIndex == 6))
-					{	// Sang Blue
-						TileToSpawn = UGameplayStatics::BeginDeferredActorSpawnFromClass(this, SangBlueTileClass.LoadSynchronous(), SpawnTransform);
-					}
-					else if ((OuterIndex == 0 && InnerIndex == 1) || (OuterIndex == 0 && InnerIndex == 7))
-					{	// Ma Red
-						TileToSpawn = UGameplayStatics::BeginDeferredActorSpawnFromClass(this, MaRedTileClass.LoadSynchronous(), SpawnTransform);
-					}
-					else if ((OuterIndex == 9 && InnerIndex == 1) || (OuterIndex == 9 && InnerIndex == 7))
-					{	// Ma Blue
-						TileToSpawn = UGameplayStatics::BeginDeferredActorSpawnFromClass(this, MaBlueTileClass.LoadSynchronous(), SpawnTransform);
-					}
-
-					break;
-				}
-
 				if ((OuterIndex == 1 && InnerIndex == 4))
 				{	// King Red
 					TileToSpawn = UGameplayStatics::BeginDeferredActorSpawnFromClass(this, KingRedTileClass.LoadSynchronous(), SpawnTransform);
@@ -147,6 +82,22 @@ void ABlankSpawner::BuildBoard(const FVector CenteredLocation, const int X, cons
 				else if ((OuterIndex == 8 && InnerIndex == 4))
 				{	// King Blue
 					TileToSpawn = UGameplayStatics::BeginDeferredActorSpawnFromClass(this, KingBlueTileClass.LoadSynchronous(), SpawnTransform);
+				}
+				else if ((OuterIndex == TableType[0] && InnerIndex == TableType[1]) || (OuterIndex == TableType[2] && InnerIndex == TableType[3]))
+				{	// Sang Red
+					TileToSpawn = UGameplayStatics::BeginDeferredActorSpawnFromClass(this, SangRedTileClass.LoadSynchronous(), SpawnTransform);
+				}
+				else if ((OuterIndex == TableType[4] && InnerIndex == TableType[5]) || (OuterIndex == TableType[6] && InnerIndex == TableType[7]))
+				{	// Sang Blue
+					TileToSpawn = UGameplayStatics::BeginDeferredActorSpawnFromClass(this, SangBlueTileClass.LoadSynchronous(), SpawnTransform);
+				}
+				else if ((OuterIndex == TableType[8] && InnerIndex == TableType[9]) || (OuterIndex == TableType[10] && InnerIndex == TableType[11]))
+				{	// Ma Red
+					TileToSpawn = UGameplayStatics::BeginDeferredActorSpawnFromClass(this, MaRedTileClass.LoadSynchronous(), SpawnTransform);
+				}
+				else if ((OuterIndex == TableType[12] && InnerIndex == TableType[13]) || (OuterIndex == TableType[14] && InnerIndex == TableType[15]))
+				{	// Ma Blue
+					TileToSpawn = UGameplayStatics::BeginDeferredActorSpawnFromClass(this, MaBlueTileClass.LoadSynchronous(), SpawnTransform);
 				}
 				else if ((OuterIndex == 0 && InnerIndex == 0) || (OuterIndex == 0 && InnerIndex == 8))
 				{	// Cha Red

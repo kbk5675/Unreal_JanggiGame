@@ -18,6 +18,7 @@ public:
 	UWorld* World;
 	class UJanggiGameInstance* GameInstance;
 	class AJanggiPlayerController* Controller;
+	class AJanggiGameStateBase* GameState;
 	class AJanggiPlayerState* PlayerState;
 
 protected:

@@ -2,14 +2,16 @@
 
 
 #include "BlankTile.h"
-#include "MovingPoint.h"
+#include "JanggiGameStateBase.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/SceneComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Net/UnrealNetwork.h"
 
-ABlankTile::ABlankTile() : bIsSpawnMovingPoint(false)
+ABlankTile::ABlankTile()
 {
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
+	bReplicates = true;
 
 	SceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Root Scene"));
 	RootComponent = SceneComponent;
@@ -29,43 +31,58 @@ ABlankTile::ABlankTile() : bIsSpawnMovingPoint(false)
 	}
 }
 
-void ABlankTile::SpawnUnit()
+void ABlankTile::BeginPlay()
 {
-	FVector Location = UnitSlot->GetComponentLocation();
-	FRotator Rotation = UnitSlot->GetComponentRotation();
+	Super::BeginPlay();
 
-	ABasePawn* Unit = GetWorld()->SpawnActor<ABasePawn>(SpawnUnitClass, Location, Rotation);
-	if (Unit)
-	{
-		SetCurrentUnit(Unit);
-		Unit->SetCurrentTile(this);
-	}
+	SpawnActors();
 }
 
-void ABlankTile::SpawnMovePoint(int const MovingUnitTeamInfo)
+void ABlankTile::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
-	// TO Do
-	// 1. UnitSlot의 위치, 회전 정보 받아와 SpawnActor로 MovingPointActor를 생성
-	// 2. CurrentUnit이 아군유닛이면 생성하지 않는다.
-	// 3. MovingPointActor가 이미 생성되어 있다면 더 이상 생성하지 않는다.
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ThisClass, TileInfo);
+	DOREPLIFETIME(ThisClass, CurrentUnit);
+	DOREPLIFETIME(ThisClass, CurrentMovingPoint);
+}
+
+
+void ABlankTile::SpawnActors()
+{	
+	ABasePawn* Unit;
+	AMovingPoint* MovingPoint;
 
 	FVector Location = UnitSlot->GetComponentLocation();
 	FRotator Rotation = UnitSlot->GetComponentRotation();
 
-	if (CurrentUnit)
-	{
-		if (CurrentUnit->GetTeam() == MovingUnitTeamInfo) return;
-	}
-
-	if (!GetbIsSpawnMovingPoint())
-	{
-		auto MovingPoint = GetWorld()->SpawnActor<AMovingPoint>(MovingPointClass, Location, Rotation);
-		if (MovingPoint)
+	if (HasAuthority())
+	{// Only Once Spawn In Server
+		if (SpawnUnitClass)
 		{
-			MovingPoint->CurrentTile = this;
-			MovingPoint->Y = this->GetTileInfo().Y;
-			MovingPoint->X = this->GetTileInfo().X;
-			SetbIsSpawnMovingPoint(true);
+			Unit = GetWorld()->SpawnActor<ABasePawn>(SpawnUnitClass, Location, Rotation);
+			if (Unit)
+			{
+				SetCurrentUnit(Unit);
+				Unit->SetCurrentTileAndPos(this);
+			}
+		}
+
+		if (MovingPointClass)
+		{
+			MovingPoint = GetWorld()->SpawnActor<AMovingPoint>(MovingPointClass, Location, Rotation);
+			if (MovingPoint)
+			{
+				SetCurrentMovingPoint(MovingPoint);
+				CurrentMovingPoint->CurrentTile = this;
+				CurrentMovingPoint->Y = this->GetTileInfo().Y;
+				CurrentMovingPoint->X = this->GetTileInfo().X;
+				//CurrentMovingPoint->SetActorEnableCollision(false);
+				CurrentMovingPoint->SetActorHiddenInGame(true);
+
+				auto GameState = Cast<AJanggiGameStateBase>(GetWorld()->GetGameState());
+				GameState->MovingPoints.Add(MovingPoint);
+			}
 		}
 	}
 }
@@ -76,17 +93,6 @@ void ABlankTile::SetCurrentUnit(AActor* Unit)
 	CurrentUnit = Temp;
 }
 
-void ABlankTile::BeginPlay()
-{
-	Super::BeginPlay();
-
-	SpawnUnit();
-}
-
-void ABlankTile::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-}
 
 
 

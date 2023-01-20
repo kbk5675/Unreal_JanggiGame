@@ -3,6 +3,7 @@
 
 #include "Jole.h"
 #include "../JanggiGameStateBase.h"
+#include "../JanggiPlayerController.h"
 #include "../BlankTile.h"
 
 AJole::AJole()
@@ -17,60 +18,34 @@ AJole::AJole()
 
 void AJole::BeginPlay()
 {
-	// Create Level after
-	UE_LOG(LogTemp, Warning, TEXT("Jole BeginPlay"));
+	Super::BeginPlay();
+
 }
 
 void AJole::OnClickJole(UPrimitiveComponent* ClickedComp, FKey ButtonClicked)
 {
-	FoundMovableTile();
-}
-
-void AJole::FoundMovableTile()
-{
+	auto PlayerController = Cast<AJanggiPlayerController>(GetWorld()->GetFirstPlayerController());
 	auto GameState = Cast<AJanggiGameStateBase>(GetWorld()->GetGameState());
 
-	for (int i = 0; i < GameState->BoardTiles.Num(); i++)
+	if (HasAuthority())
 	{
-		auto Tile = Cast<ABlankTile>(GameState->BoardTiles[i]);
-
-		int TargetPosY = Tile->GetTileInfo().Y;
-		int TargetPosX = Tile->GetTileInfo().X;
-		
-		auto TargetTileUnit = Cast<ABasePawn>(Tile->GetCurrentUnit());
-		
 		if (Team == 1)
 		{
-			if (TargetPosY == this->Y + 1 && TargetPosX == this->X)
-			{
-					Tile->SpawnMovePoint(this->Team);
-			}
+			GameState->FindMoveableTile(Y + 1, X);
+			GameState->FindMoveableTile(Y, X - 1);
+			GameState->FindMoveableTile(Y, X + 1);
 		}
-		else
+	}
+	else
+	{
+		if (Team == 2)
 		{
-			if (TargetPosY == this->Y - 1 && TargetPosX == this->X)
-			{
-				
-					Tile->SpawnMovePoint(this->Team);
-			}
-		}
-		
-		if (TargetPosY == this->Y && TargetPosX == this->X + 1)
-		{
-			
-				Tile->SpawnMovePoint(this->Team);
-			
-		}
-		if (TargetPosY == this->Y && TargetPosX == this->X - 1)
-		{
-			
-				Tile->SpawnMovePoint(this->Team);
-			
+			GameState->FindMoveableTile(Y - 1, X);
+			GameState->FindMoveableTile(Y, X - 1);
+			GameState->FindMoveableTile(Y, X + 1);
 		}
 	}
 }
-
-
 
 
 
